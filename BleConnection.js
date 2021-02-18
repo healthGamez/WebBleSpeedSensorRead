@@ -9,6 +9,13 @@ document.querySelector('#Connect').addEventListener('click', function () {
     if (isWebBluetoothEnabled()) { connect() }
 })
 
+document.querySelector('#Start').addEventListener('click', function (event) {
+    if (isWebBluetoothEnabled()) { start() }
+})
+
+document.querySelector('#Stop').addEventListener('click', function (event) {
+    if (isWebBluetoothEnabled()) { stop() }
+})
 
 
 
@@ -57,11 +64,44 @@ function connect() {
         })
         .then(characteristic => {
             gattCharacteristic = characteristic
-          
-
+            document.querySelector('#Start').disabled = false
+            document.querySelector('#Stop').disabled = true
         })
         .catch(error => {
             console.log('Argh! ' + error)
         })
     
- }
+}
+
+//When pressing start, start notification of bike speed measurment
+function start() {
+    gattCharacteristic.startNotifications()
+        .then(_ => {
+            gattCharacteristic.addEventListener('characteristicvaluechanged', handleCharacteristicValueChanged)
+            console.log('Start reading...')
+            document.querySelector('#Start').disabled = true
+            document.querySelector('#Stop').disabled = false
+      })
+      .catch (error => {
+        console.log('Argh! ' + error)
+       })
+    }
+
+function stop() {
+    gattCharacteristic.stopNotifications()
+        .then(_ => {
+            console.log('Stop reading...')
+            document.querySelector('#start').disabled = false
+            document.querySelector('#stop').disabled = true
+        })
+        .catch(error => {
+            console.log('[ERROR] Stop: ' + error)
+        })
+}
+
+function handleCharacteristicValueChanged(event) {
+    const value = event.target.value;
+    console.log('Received ' + value);
+    // TODO: Parse  Measurement value.
+    
+}
