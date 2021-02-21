@@ -107,4 +107,44 @@ function handleCharacteristicValueChanged(event) {
         a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
     }
     console.log('> ' + a.join(' '));
+
+    parseCscValue(value)
 }
+
+function parseCscValue(value) {
+    value = value.buffer ? value : new DataView(value);
+    const flagField = value.getUint8(0)
+    let result = {}
+    result.flagField = flagField
+    let index =1
+
+    switch (flagField) {
+        case 1: //Sensor is Wheel revolution sensor
+            result.cumulativeWheelRevolutions = value.getUint32(index, /*littleEndian=*/true)
+            index += 4
+            result.wheelTimeStamp = value.getUint16(index, /*littleEndian=*/true)
+            console.log(result)
+            break
+        case 2:
+            result.cumulativeCrankRevolutions = value.getUint16(index, /*littleEndian=*/true)
+            index += 2
+            result.crankTimeStamp = value.getUint16(index, /*littleEndian=*/true)
+            console.log(result)
+            break
+        case 3:
+            result.cumulativeWheelRevolutions = value.getUint32(index, /*littleEndian=*/true)
+            index += 4
+            result.wheelTimeStamp = value.getUint16(index, /*littleEndian=*/true)
+
+            result.cumulativeCrankRevolutions = value.getUint16(index, /*littleEndian=*/true)
+            index += 2
+            result.crankTimeStamp = value.getUint16(index, /*littleEndian=*/true)
+            console.log(result)
+            break
+        default:
+            console.log("error, undefined flagfield value:" + flagField)
+    }
+    return result
+
+}
+
