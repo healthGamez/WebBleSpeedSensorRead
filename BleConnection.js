@@ -91,8 +91,8 @@ function stop() {
     gattCharacteristic.stopNotifications()
         .then(_ => {
             console.log('Stop reading...')
-            document.querySelector('#start').disabled = false
-            document.querySelector('#stop').disabled = true
+            document.querySelector('#Start').disabled = false
+            document.querySelector('#Stop').disabled = true
         })
         .catch(error => {
             console.log('[ERROR] Stop: ' + error)
@@ -101,7 +101,10 @@ function stop() {
 
 function handleCharacteristicValueChanged(event) {
     const value = event.target.value;
-    console.log('Received ' + value);
-    // TODO: Parse  Measurement value.
-    
+    let a = [];
+    // Convert raw data bytes to hex values just for the sake of showing something.
+    for (let i = 0; i < value.byteLength; i++) {
+        a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
+    }
+    console.log('> ' + a.join(' '));
 }
