@@ -1,9 +1,9 @@
 
 var bleService = 'cycling_speed_and_cadence'//GATT service requied in sensor 
-var bleCharacteristic = 'csc_measurement'
-var bluetoothDeviceDetected
-var gattServer
-var gattCharacteristic
+var bleCharacteristic = 'csc_measurement' //GATT characteristic desrited
+var bluetoothDeviceDetected //Device object
+var gattServer //GATT server object
+var gattCharacteristic //GATT characteristic object
 
 document.querySelector('#Connect').addEventListener('click', function () {
     if (isWebBluetoothEnabled()) { connect() }
@@ -87,6 +87,7 @@ function start() {
        })
     }
 
+//When pressing stop, stop notification of bike speed measurment
 function stop() {
     gattCharacteristic.stopNotifications()
         .then(_ => {
@@ -99,6 +100,7 @@ function stop() {
         })
 }
 
+//Called when notification recived from sensor
 function handleCharacteristicValueChanged(event) {
     const value = event.target.value;
     let a = [];
@@ -108,11 +110,13 @@ function handleCharacteristicValueChanged(event) {
     }
     console.log('> ' + a.join(' '));
 
-    parseCscValue(value)
+    const parsedCscValue = parseCscValue(value)
+    console.log(parsedCscValue)
 }
 
+//Parsing function for CSC value
 function parseCscValue(value) {
-    value = value.buffer ? value : new DataView(value);
+    value = value.buffer ? value : new DataView(value);    // In Chrome 50+, a DataView is returned instead of an ArrayBuffer.
     const flagField = value.getUint8(0)
     let result = {}
     result.flagField = flagField
@@ -123,15 +127,15 @@ function parseCscValue(value) {
             result.cumulativeWheelRevolutions = value.getUint32(index, /*littleEndian=*/true)
             index += 4
             result.wheelTimeStamp = value.getUint16(index, /*littleEndian=*/true)
-            console.log(result)
             break
-        case 2:
+
+        case 2: //Sensor is Crank revolution sensor
             result.cumulativeCrankRevolutions = value.getUint16(index, /*littleEndian=*/true)
             index += 2
             result.crankTimeStamp = value.getUint16(index, /*littleEndian=*/true)
-            console.log(result)
             break
-        case 3:
+
+        case 3: //Sensor is Wheel and Crank revolution sensor
             result.cumulativeWheelRevolutions = value.getUint32(index, /*littleEndian=*/true)
             index += 4
             result.wheelTimeStamp = value.getUint16(index, /*littleEndian=*/true)
@@ -139,12 +143,11 @@ function parseCscValue(value) {
             result.cumulativeCrankRevolutions = value.getUint16(index, /*littleEndian=*/true)
             index += 2
             result.crankTimeStamp = value.getUint16(index, /*littleEndian=*/true)
-            console.log(result)
             break
-        default:
+
+        default: //This should never happen
             console.log("error, undefined flagfield value:" + flagField)
     }
     return result
-
 }
 
