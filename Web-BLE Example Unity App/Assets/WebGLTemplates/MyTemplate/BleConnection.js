@@ -105,13 +105,13 @@ function handleCharacteristicValueChanged(event) {
     const value = event.target.value;
     let a = [];
     // Convert raw data bytes to hex values just for the sake of showing something.
-    for (let i = 0; i < value.byteLength; i++) {
+    /*for (let i = 0; i < value.byteLength; i++) {
         a.push('0x' + ('00' + value.getUint8(i).toString(16)).slice(-2));
     }
     console.log('> ' + a.join(' '));
-
+*/
     const parsedCscValue = parseCscValue(value)
-    console.log(parsedCscValue)
+  //  console.log(parsedCscValue)
     unityInstance.SendMessage('JavascriptHook', 'getSensorReading', JSON.stringify(parsedCscValue));
 }
 
