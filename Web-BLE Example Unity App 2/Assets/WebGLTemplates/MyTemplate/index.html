@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | Web-BLE Example Unity App</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <script src="TemplateData/UnityProgress.js"></script>
+    <script src="Build/UnityLoader.js"></script>
+    <script>
+        var unityInstance = UnityLoader.instantiate("unityContainer", "Build/BuildFolder.json", { onProgress: UnityProgress });
+    </script>
+</head>
+<body>
+    <h1>Web BLE Speed-Sensor Read</h1>
+    <button id="Connect">Connect with BLE device</button>
+    <button id="Start" disabled>Start</button>
+    <button id="Stop" disabled>Stop</button>
+    <script src="BleConnection.js"></script>
+
+    <div class="webgl-content">
+        <div id="unityContainer" style="width: 960px; height: 600px"></div>
+
+    </div>
+</body>
+</html>
