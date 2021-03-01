@@ -39,9 +39,11 @@ public class JavascriptHook : MonoBehaviour
                 lastTimeStampValueText.text = sensorReadingJsonObject.wheelTimeStamp.ToString();
                 if (previousCumulativeWheelRevolutions!=0 && previousCumulativeWheelRevolutions!=sensorReadingJsonObject.cumulativeWheelRevolutions){
                     double WheelRoundsSinceLast=sensorReadingJsonObject.cumulativeWheelRevolutions-previousCumulativeWheelRevolutions;
-                    double timeSinceLastRound = (sensorReadingJsonObject.wheelTimeStamp - previousWheelTimeStamp)/1024.0;             
+                    double timeSinceLastRound = (sensorReadingJsonObject.wheelTimeStamp - previousWheelTimeStamp)/1024.0;
+                    double timeSinceLastRound2 = (Time.fixedTime - lastupdate);
+
                     if (timeSinceLastRound>0.0 && timeSinceLastRound <= maxRoundTime){
-                        speedValueText.text=(WheelRoundsSinceLast/timeSinceLastRound*60.0).ToString("0.00")+" rpm";
+                        speedValueText.text=(WheelRoundsSinceLast/timeSinceLastRound*60.0).ToString("0.00")+"/"+(WheelRoundsSinceLast / timeSinceLastRound2 * 60.0).ToString("0.00") + " rpm";
                         lastupdate=Time.fixedTime;
                     }
                 }
@@ -62,11 +64,15 @@ public class JavascriptHook : MonoBehaviour
                 if (previousCumulativeCrankRevolutions != 0 && previousCumulativeCrankRevolutions!=sensorReadingJsonObject.cumulativeCrankRevolutions){
                     double CrankRoundsSinceLast=sensorReadingJsonObject.cumulativeCrankRevolutions-previousCumulativeCrankRevolutions;
                     double timeSinceLastRound = (sensorReadingJsonObject.crankTimeStamp - previousCrankTimeStamp) / 1024.0;
-                    if (timeSinceLastRound>0.0 && timeSinceLastRound <= maxRoundTime)
+                    double timeSinceLastRound2 = (Time.fixedTime - lastupdate);
+
+
+                    if (timeSinceLastRound>0.0 && timeSinceLastRound2 <= maxRoundTime)
                     {
-                        speedValueText.text=(CrankRoundsSinceLast/timeSinceLastRound*60.0).ToString("0.00")+" rpm";
-                        lastupdate=Time.fixedTime;
+                        speedValueText.text=(CrankRoundsSinceLast/timeSinceLastRound*60.0).ToString("0.00")+"/"+ (CrankRoundsSinceLast / timeSinceLastRound2 * 60.0).ToString("0.00") + " rpm";
+                        
                     }
+                    lastupdate = Time.fixedTime;
                 }
                 else if ((Time.fixedTime-lastupdate)> maxRoundTime)
                 {
@@ -83,6 +89,9 @@ public class JavascriptHook : MonoBehaviour
                     + sensorReadingJsonObject.cumulativeCrankRevolutions.ToString() + " rounds"; 
                 lastTimeStampValueText.text = sensorReadingJsonObject.wheelTimeStamp.ToString()
                     +" / "+ sensorReadingJsonObject.crankTimeStamp.ToString();
+                
+                //TODO implement for dual sensor
+                
                 break;
             default:
                 Debug.LogError("Unexpected json parsing error");
